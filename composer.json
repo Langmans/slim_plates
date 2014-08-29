@@ -1,7 +1,7 @@
 {
     "name": "slim/plates",
     "type": "library",
-    "description": "Plates View(native php) package for the Slim Framework",
+    "description": "Plates View (native php) package for the Slim Framework",
     "keywords": ["templating", "extensions", "slimphp", "plates", "native"],
     "homepage": "http://github.com/rubenvincenten/slim_plates",
     "license": "MIT",
