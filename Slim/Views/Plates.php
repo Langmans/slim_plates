@@ -4,6 +4,7 @@ namespace Slim\Views;
 
 use Closure;
 use League\Plates\Engine;
+use LogicException;
 use Slim\View;
 
 /**
@@ -22,7 +23,7 @@ class Plates extends View
     /**
      * {@inheritdoc}
      *
-     * @param null|Closure|array $init
+     * @param null|Closure|Array $init
      */
     public function __construct($init = null)
     {
@@ -33,16 +34,25 @@ class Plates extends View
     }
 
     /**
-     * @param CLosure|array $construct
+     * @param Closure|array $construct
+     * @throws LogicException
      */
     public function addConstruct($construct)
     {
         if ($construct && is_callable($construct)) {
             $this->_construct[] = array($construct);
-        } elseif (is_array($construct)) {
-            foreach ($construct as $load) {
-                $this->_construct[] = $load;
-            }
+        } else {
+            throw new \LogicException('Not a callable parameter: ' . var_export($construct, true));
+        }
+    }
+
+    /**
+     * @param array $constructs
+     */
+    public function addConstructs(array $constructs)
+    {
+        foreach ($constructs as $construct) {
+            $this->addConstruct($construct);
         }
     }
 
@@ -60,9 +70,9 @@ class Plates extends View
 
             $funcs = $this->_construct;
             foreach ($funcs as $func) {
-                if (is_callable($func)) {
-                    call_user_func($func, $engine);
-                }
+                //if (is_callable($func)) {
+                call_user_func($func, $engine);
+                //}
             }
             static::$_engine = $engine;
         }
