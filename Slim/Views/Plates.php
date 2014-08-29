@@ -27,10 +27,22 @@ class Plates extends View
     public function __construct($init = null)
     {
         parent::__construct();
-        if ($init && is_callable($init)) {
-            $this->_construct = array($init);
-        } elseif (is_array($init)) {
-            $this->_construct = $init;
+        if ($init) {
+            $this->addConstruct($init);
+        }
+    }
+
+    /**
+     * @param CLosure|array $construct
+     */
+    public function addConstruct($construct)
+    {
+        if ($construct && is_callable($construct)) {
+            $this->_construct[] = array($construct);
+        } elseif (is_array($construct)) {
+            foreach ($construct as $load) {
+                $this->_construct[] = $load;
+            }
         }
     }
 
