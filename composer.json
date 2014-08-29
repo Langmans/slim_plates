@@ -1,0 +1,24 @@
+{
+    "name": "slim/plates",
+    "type": "library",
+    "description": "Plates View(native php) package for the Slim Framework",
+    "keywords": ["templating", "extensions", "slimphp", "plates", "native"],
+    "homepage": "http://github.com/rubenvincenten/slim_plates",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ruben Vincenten",
+            "email": "rubenvincenten@gmail.com"
+        }
+    ],
+    "require": {
+        "slim/slim": ">=2.4.0",
+        "php": ">=5.3.0",
+        "league/plates": "2.*"
+    },
+    "autoload": {
+        "psr-0": {
+            "Slim": "."
+        }
+    }
+}
