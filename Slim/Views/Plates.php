@@ -2,9 +2,14 @@
 
 namespace Slim\Views;
 
+use Closure;
 use League\Plates\Engine;
 use Slim\View;
 
+/**
+ * Class Plates
+ * @package Slim\Views
+ */
 class Plates extends View
 {
     /**
@@ -14,6 +19,11 @@ class Plates extends View
 
     private $_construct = array();
 
+    /**
+     * {@inheritdoc}
+     *
+     * @param null|Closure|array $init
+     */
     public function __construct($init = null)
     {
         parent::__construct();
@@ -24,6 +34,13 @@ class Plates extends View
         }
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @param string $templateFile
+     * @param null $data
+     * @return string
+     */
     public function render($templateFile, $data = null)
     {
         if (!isset(static::$_engine)) {
