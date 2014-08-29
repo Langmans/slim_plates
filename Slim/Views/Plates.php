@@ -40,7 +40,7 @@ class Plates extends View
     public function addConstruct($construct)
     {
         if ($construct && is_callable($construct)) {
-            $this->_construct[] = array($construct);
+            $this->_construct[] = $construct;
         } else {
             throw new \LogicException('Not a callable parameter: ' . var_export($construct, true));
         }
