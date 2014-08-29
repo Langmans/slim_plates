@@ -15,12 +15,13 @@ PHP Slim View for PHP Plates.
  */
 $autoload = require 'vendor/autoload.php';
 
-$app = new Slim\Slim(array(
-    'view' =>  new Slim\Views\Plates(function (League\Plates\Engine $engine) use ($app) {
+$app = new Slim\Slim();
+$app->view(
+    new Slim\Views\Plates(function (League\Plates\Engine $engine) use ($app) {
         $engine->loadExtension(new League\Plates\Extension\URI($app->request()->getPathInfo()));
         $engine->loadExtension(new Slim\Views\PlatesExtension);
     })
-));
+);
 
 // routes...
 
