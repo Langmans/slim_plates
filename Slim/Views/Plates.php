@@ -112,11 +112,11 @@ class Plates extends View
     /**
      * {@inheritdoc}
      */
-    public function render($templateFile, array $data = array())
+    public function render($templateFile, $data = null)
     {
         $template = $this->getEngine()->make($templateFile);
         $template->data($this->all());
 
-        return $template->render($data);
+        return $template->render((array)$data);
     }
 }
