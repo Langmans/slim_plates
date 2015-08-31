@@ -12,9 +12,9 @@
         }
     ],
     "require": {
-        "slim/slim": ">=2.4.0",
-        "php": ">=5.3.0",
-        "league/plates": "2.*"
+        "slim/slim": "^2",
+        "php": ">5.3.0",
+        "league/plates": "^3"
     },
     "autoload": {
         "psr-0": {

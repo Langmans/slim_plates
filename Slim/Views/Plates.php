@@ -2,9 +2,9 @@
 
 namespace Slim\Views;
 
-use Closure;
+use InvalidArgumentException;
 use League\Plates\Engine;
-use LogicException;
+use RuntimeException;
 use Slim\View;
 
 /**
@@ -16,69 +16,107 @@ class Plates extends View
     /**
      * @var Engine $_engine
      */
-    static $_engine;
+    protected $_engine;
 
+    /**
+     * @var callable[]
+     */
     private $_construct = array();
 
     /**
      * {@inheritdoc}
      *
-     * @param null|Closure|Array $init
+     * @param null|callable|callable[] $init
      */
     public function __construct($init = null)
     {
         parent::__construct();
-        if ($init) {
+        if (is_array($init)) {
+            $this->addConstructs($init);
+        } elseif ($init) {
             $this->addConstruct($init);
         }
     }
 
     /**
-     * @param Closure|array $construct
-     * @throws LogicException
+     * @param callable[] $constructs
+     * @param bool|true  $lazy
      */
-    public function addConstruct($construct)
+    public function addConstructs(array $constructs, $lazy = true)
     {
-        if ($construct && is_callable($construct)) {
-            $this->_construct[] = $construct;
-        } else {
-            throw new \LogicException('Not a callable parameter: ' . var_export($construct, true));
+        foreach ($constructs as $construct) {
+            $this->addConstruct($construct, $lazy);
         }
     }
 
     /**
-     * @param array $constructs
+     * @param callable  $construct
+     * @param bool|true $lazy
      */
-    public function addConstructs(array $constructs)
+    public function addConstruct($construct, $lazy = false)
     {
-        foreach ($constructs as $construct) {
-            $this->addConstruct($construct);
+        if ($construct && is_callable($construct)) {
+            if ($this->hasEngine()) {
+                if ($lazy) {
+                    throw new RuntimeException ('Cannot add callback to plates lazy load queue: already instantiated.');
+                } else {
+                    call_user_func($construct, $this->getEngine());
+                }
+            } else {
+                $this->_construct[] = $construct;
+            }
+        } else {
+            throw new InvalidArgumentException ('Not a callable parameter: ' . var_export($construct, true));
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasEngine()
+    {
+        return isset($this->_engine);
+    }
+
+    /**
+     * @return Engine
+     */
+    public function getEngine()
+    {
+        if (!$this->hasEngine()) {
+            $engine = new Engine($this->getTemplatesDirectory());
+
+            $funcs = $this->_construct;
+            /** @var callable $func */
+            foreach ($funcs as $func) {
+                call_user_func($func, $engine);
+            }
+            $this->setEngine($engine);
+        }
+
+        return $this->_engine;
+    }
+
+    /**
+     * @param Engine $engine
+     *
+     * @return $this
+     */
+    public function setEngine(Engine $engine)
+    {
+        $this->_engine = $engine;
+
+        return $this;
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @param string $templateFile
-     * @param null $data
-     * @return string
      */
     public function render($templateFile, $data = null)
     {
-        if (!isset(static::$_engine)) {
-            $engine = new Engine($this->getTemplatesDirectory());
-
-            $funcs = $this->_construct;
-            foreach ($funcs as $func) {
-                //if (is_callable($func)) {
-                call_user_func($func, $engine);
-                //}
-            }
-            static::$_engine = $engine;
-        }
-
-        $template = static::$_engine->makeTemplate();
+        $template = $this->getEngine()->make($templateFile);
         $template->data($this->all());
-        return $template->render($templateFile, $data);
+
+        return $template->render($data);
     }
 }

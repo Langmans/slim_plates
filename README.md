@@ -29,16 +29,20 @@ $app->run();
 
 ```
 
-## composer.json
+## installation
 
+version 1.0 requires plates 3.0. If you need to use 2.x, use 0.2. When installing, use * to determine which version to use.
+
+### via composer.json:
 ```json
 {
     "require": {
-        "slim/plates": "*@dev"
+        "slim/plates": "*"
     }
 }
 ```
-## then
+
+and then
 
 ```bash
 composer install
@@ -47,4 +51,9 @@ composer install
 or
 ```bash
 composer update -o
+```
+
+### via command line
+```bash
+composer require slim/plates
 ```
